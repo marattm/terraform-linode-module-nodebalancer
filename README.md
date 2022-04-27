@@ -5,7 +5,7 @@
 Invoke this module from the root `main.tf` file.
 
 ```hcl
-module "lb" {
+module "nodebalancer" {
   source                  = "./modules/nodebalancer"
   region                  = var.region
   node_count              = var.node_count

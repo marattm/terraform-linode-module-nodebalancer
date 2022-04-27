@@ -1,13 +1,13 @@
 
-resource "linode_nodebalancer" "lb" {
+resource "linode_nodebalancer" "nodebalancer" {
   label  = "mynodebalancer"
   region = var.region
   # client_conn_throttle = 20
   tags = ["demo"]
 }
 
-resource "linode_nodebalancer_config" "lb-config" {
-  nodebalancer_id = linode_nodebalancer.lb.id
+resource "linode_nodebalancer_config" "nodebalancer-config" {
+  nodebalancer_id = linode_nodebalancer.nodebalancer.id
   port            = 80
   protocol        = "http"
   check           = "http_body"
@@ -22,8 +22,8 @@ resource "linode_nodebalancer_config" "lb-config" {
 
 resource "linode_nodebalancer_node" "webnode" {
   count           = var.node_count
-  nodebalancer_id = linode_nodebalancer.lb.id
-  config_id       = linode_nodebalancer_config.lb-config.id
+  nodebalancer_id = linode_nodebalancer.nodebalancer.id
+  config_id       = linode_nodebalancer_config.nodebalancer-config.id
   address         = "${element(var.web_servers_private_ips, count.index)}:80"
   label           = "nb-backnode-${count.index}"
   weight          = 100
