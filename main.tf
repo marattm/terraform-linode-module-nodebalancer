@@ -1,9 +1,9 @@
 
 resource "linode_nodebalancer" "nodebalancer" {
-  label  = "mynodebalancer"
+  label  = "${var.SITE}-lb-${var.ENV}"
   region = var.region
+  tags   = var.tags
   # client_conn_throttle = 20
-  tags = ["demo"]
 }
 
 resource "linode_nodebalancer_config" "nodebalancer-config" {
@@ -16,9 +16,24 @@ resource "linode_nodebalancer_config" "nodebalancer-config" {
   check_attempts  = 30
   check_timeout   = 25
   check_interval  = 30
-  stickiness      = "http_cookie"
-  algorithm       = "roundrobin"
+  stickiness      = var.stickiness
+  algorithm       = var.algorithm
 }
+
+# resource "linode_nodebalancer_config" "nodebalancer-config-https" {
+#   nodebalancer_id = linode_nodebalancer.nodebalancer.id
+#   port            = 443
+#   protocol        = "https"
+#   check           = "http_body"
+#   check_path      = "/healthcheck/"
+#   check_body      = "healthcheck"
+#   check_attempts  = 30
+#   check_timeout   = 25
+#   check_interval  = 30
+#   stickiness      = "http_cookie"
+#   algorithm       = var.algorithm
+# }
+
 
 resource "linode_nodebalancer_node" "webnode" {
   count           = var.node_count
